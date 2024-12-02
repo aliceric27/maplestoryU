@@ -41,7 +41,9 @@ body{
 
 .banner-img {
   width: 100%;
+  object-fit: scale-down;
   height: auto;
+  max-width: 1000px;
 }
 
 .spacer {
