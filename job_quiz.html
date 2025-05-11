@@ -222,12 +222,20 @@
         </div>
         
         <div id="result">
-            <h2>你最適合的職業是：<span id="job-result"></span></h2>
-            <div id="job-description"></div>
-            <div class="job-details">
-                <p><strong>打王能力：</strong><span id="boss-tier"></span></p>
-                <p><strong>刷怪能力：</strong><span id="farm-tier"></span></p>
-                <p><strong>裝備造價：</strong><span id="cost"></span></p>
+            <h2>您的職業適性測驗結果</h2>
+            <div id="top-job">
+                <h3>最適合您的職業：<span id="job-result"></span></h3>
+                <div id="job-description"></div>
+                <div class="job-details">
+                    <p><strong>打王能力：</strong><span id="boss-tier"></span></p>
+                    <p><strong>刷怪能力：</strong><span id="farm-tier"></span></p>
+                    <p><strong>裝備造價：</strong><span id="cost"></span></p>
+                </div>
+            </div>
+            
+            <div id="other-jobs" style="margin-top: 30px;">
+                <h3>其他適合您的職業：</h3>
+                <div id="ranked-jobs"></div>
             </div>
             <button id="restart">重新測驗</button>
             <div style="margin-top: 30px;">
@@ -476,14 +484,35 @@
         // 顯示結果
         function showResult() {
             // 根據答案推薦職業
-            let recommendedJob = getRecommendedJob();
+            let rankedJobs = getRecommendedJobs();
             
-            // 顯示結果
-            document.getElementById('job-result').textContent = recommendedJob;
-            document.getElementById('job-description').textContent = jobs[recommendedJob].description;
-            document.getElementById('boss-tier').textContent = jobs[recommendedJob].boss;
-            document.getElementById('farm-tier').textContent = jobs[recommendedJob].farm;
-            document.getElementById('cost').textContent = jobs[recommendedJob].cost;
+            // 顯示最佳推薦職業
+            let topJob = rankedJobs[0].job;
+            document.getElementById('job-result').textContent = topJob;
+            document.getElementById('job-description').textContent = jobs[topJob].description;
+            document.getElementById('boss-tier').textContent = jobs[topJob].boss;
+            document.getElementById('farm-tier').textContent = jobs[topJob].farm;
+            document.getElementById('cost').textContent = jobs[topJob].cost;
+            
+            // 顯示其他職業排名
+            let rankedJobsHTML = '';
+            for (let i = 1; i < rankedJobs.length; i++) {
+                let jobInfo = rankedJobs[i];
+                let jobClass = i <= 3 ? 'top-ranked' : '';
+                rankedJobsHTML += `
+                <div class="ranked-job ${jobClass}" style="margin-bottom: 15px; padding: 10px; border-left: 3px solid ${i <= 3 ? 'var(--accent)' : '#ddd'}; background-color: ${i <= 3 ? 'rgba(255, 193, 7, 0.05)' : '#f9f9f9'};">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="margin: 0;">${i + 1}. ${jobInfo.job}</h4>
+                        <span style="color: ${i <= 3 ? 'var(--primary)' : '#777'};">${jobInfo.score.toFixed(1)}分</span>
+                    </div>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #555;">
+                        打王: ${jobs[jobInfo.job].boss} | 
+                        刷怪: ${jobs[jobInfo.job].farm} | 
+                        造價: ${jobs[jobInfo.job].cost}
+                    </p>
+                </div>`;
+            }
+            document.getElementById('ranked-jobs').innerHTML = rankedJobsHTML;
             
             quizDiv.style.display = 'none';
             resultDiv.style.display = 'block';
@@ -491,7 +520,7 @@
         }
 
         // 根據答案推薦職業
-        function getRecommendedJob() {
+        function getRecommendedJobs() {
             const preference = answers.q1;
             const range = answers.q2;
             const budget = answers.q3;
@@ -608,28 +637,19 @@
                 }
             }
             
-            // 找出得分最高的職業
-            let maxPoints = 0;
-            let recommendedJobs = [];
-            
+            // 將所有職業按分數排序
+            let rankedJobs = [];
             for (let job in points) {
-                if (points[job] > maxPoints) {
-                    maxPoints = points[job];
-                    recommendedJobs = [job];
-                } else if (points[job] === maxPoints) {
-                    recommendedJobs.push(job);
-                }
+                rankedJobs.push({ job: job, score: points[job] });
             }
             
-            // 如果有多個最高分職業，返回列表中第一個或隨機選擇一個
-            let recommendedJob = recommendedJobs.length > 1 ? 
-                recommendedJobs[Math.floor(Math.random() * recommendedJobs.length)] : 
-                recommendedJobs[0];
-                
-            console.log("所有職業分數:", points);
-            console.log("推薦職業:", recommendedJob, "分數:", maxPoints);
+            // 按分數降序排序
+            rankedJobs.sort((a, b) => b.score - a.score);
             
-            return recommendedJob;
+            console.log("所有職業分數:", points);
+            console.log("職業排名:", rankedJobs);
+            
+            return rankedJobs;
         }
     </script>
 </body>
