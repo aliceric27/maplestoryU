@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/webp" href="universeico.webp">
+    <title>MapleStory U - 職業適性測驗</title>
+    <style>
+        :root {
+            --primary: #8B5A2B;
+            --secondary: #D2B48C;
+            --accent: #FFC107;
+            --text: #333;
+            --background: #F5F5DC;
+        }
+        
+        body {
+            font-family: "微軟正黑體", Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 90%;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin: 30px 0;
+        }
+        
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+        }
+        
+        .intro {
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .question {
+            margin-bottom: 25px;
+            display: none;
+        }
+        
+        .question.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        .question h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option {
+            background-color: var(--secondary);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option:hover {
+            background-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        #result {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+        
+        #result h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .job-details {
+            margin-top: 15px;
+            padding: 10px;
+            border-left: 4px solid var(--accent);
+            background-color: rgba(255, 193, 7, 0.1);
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        #progress {
+            width: 100%;
+            height: 10px;
+            background-color: #ddd;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        #progress-bar {
+            height: 100%;
+            background-color: var(--accent);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        #restart {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MapleStory U - 職業適性測驗</h1>
+        
+        <div class="intro" id="intro">
+            <p>在冒險島的世界中，每個職業都有其獨特的特點和優勢。通過這個簡單的測驗，我們將幫助你找到最適合你的職業！</p>
+            <p>請回答以下問題，看看你最適合哪個職業吧！</p>
+            <button id="start-btn">開始測驗</button>
+        </div>
+        
+        <div id="quiz" style="display: none;">
+            <div id="progress">
+                <div id="progress-bar"></div>
+            </div>
+            
+            <div class="question active" id="q1">
+                <h3>1. 你比較喜歡？</h3>
+                <div class="options">
+                    <div class="option" data-value="boss">打BOSS，挑戰強大的敵人</div>
+                    <div class="option" data-value="farm">刷圖，高效率地練級和收集物品</div>
+                    <div class="option" data-value="support">幫助隊友，提供支援和輔助</div>
+                </div>
+            </div>
+            
+            <div class="question" id="q2">
+                <h3>2. 你偏好的攻擊距離是？</h3>
+                <div class="options">
+                    <div class="option" data-value="ranged">遠程攻擊，保持安全距離</div>
+                    <div class="option" data-value="melee">近戰攻擊，直接面對敵人</div>
+                </div>
+            </div>
+            
+            <div class="question" id="q3">
+                <h3>3. 你願意在裝備上投入多少資源？</h3>
+                <div class="options">
+                    <div class="option" data-value="expensive">願意投入較多資源獲得更好的裝備</div>
+                    <div class="option" data-value="budget">偏好花費較少，性價比更高的選擇</div>
+                </div>
+            </div>
+            
+            <div class="question" id="q4">
+                <h3>4. 你更喜歡？</h3>
+                <div class="options">
+                    <div class="option" data-value="simple">操作簡單，容易上手的職業</div>
+                    <div class="option" data-value="complex">操作複雜，但威力強大的職業</div>
+                </div>
+            </div>
+            
+            <div class="question" id="q5">
+                <h3>5. 你更喜歡獨自冒險還是組隊？</h3>
+                <div class="options">
+                    <div class="option" data-value="solo">獨自冒險，靠自己的力量</div>
+                    <div class="option" data-value="team">和隊友一起，團隊合作</div>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button id="prev-btn" disabled>上一題</button>
+                <button id="next-btn" disabled>下一題</button>
+            </div>
+        </div>
+        
+        <div id="result">
+            <h2>你最適合的職業是：<span id="job-result"></span></h2>
+            <div id="job-description"></div>
+            <div class="job-details">
+                <p><strong>打王能力：</strong><span id="boss-tier"></span></p>
+                <p><strong>刷怪能力：</strong><span id="farm-tier"></span></p>
+                <p><strong>裝備造價：</strong><span id="cost"></span></p>
+            </div>
+            <button id="restart">重新測驗</button>
+        </div>
+    </div>
+    
+    <script>
+        // 定義職業資料
+        const jobs = {
+            "主教": {
+                boss: "T0",
+                farm: "T2",
+                cost: "高",
+                ranged: false,
+                support: true,
+                description: "主教是團隊中不可或缺的輔助角色，擁有強大的回復和增益能力。在打BOSS時是T0級別的職業，但刷怪效率較一般。前期較難單獨發展，需要夥伴支援。"
+            },
+            "火毒": {
+                boss: "T2",
+                farm: "T0",
+                cost: "高",
+                ranged: true,
+                support: false,
+                description: "火毒法師是刷怪能力最強的職業，擁有強大的範圍傷害能力。操作熟練的火毒也能在打BOSS方面表現出色。裝備造價較高。"
+            },
+            "冰雷": {
+                boss: "T2",
+                farm: "T1",
+                cost: "高",
+                ranged: true,
+                support: false,
+                description: "冰雷法師擁有出色的刷怪能力和不錯的BOSS戰鬥能力。冰凍技能可以綁王，提高生存能力。裝備造價較高。"
+            },
+            "英雄": {
+                boss: "T1",
+                farm: "T3",
+                cost: "中",
+                ranged: false,
+                support: false,
+                description: "英雄是強力的近戰職業，在打BOSS方面表現出色，但刷怪效率較低。裝備造價適中，比較適合喜歡單挑BOSS的玩家。"
+            },
+            "聖騎士": {
+                boss: "T2",
+                farm: "T3",
+                cost: "中",
+                ranged: false,
+                support: true,
+                description: "聖騎士兼具一定的輔助能力和不錯的BOSS戰鬥能力。生存能力強，但刷怪效率一般。裝備造價適中。"
+            },
+            "黑騎士": {
+                boss: "T2",
+                farm: "T3",
+                cost: "中",
+                ranged: false,
+                support: false,
+                description: "黑騎士擁有不錯的BOSS戰鬥能力和生存能力，但刷怪效率較低。裝備造價適中，適合喜歡穩健戰鬥風格的玩家。"
+            },
+            "箭神": {
+                boss: "T1",
+                farm: "T2",
+                cost: "中",
+                ranged: true,
+                support: false,
+                description: "箭神是出色的遠程職業，在打BOSS方面表現出色，刷怪效率也不錯。機動性強，攻擊範圍廣。裝備造價適中。"
+            },
+            "神射手": {
+                boss: "T2",
+                farm: "T1",
+                cost: "中",
+                ranged: true,
+                support: false,
+                description: "神射手擁有優秀的刷怪能力和不錯的BOSS戰鬥能力。遠程攻擊安全性高，適合喜歡高機動性的玩家。裝備造價適中。"
+            },
+            "拳霸": {
+                boss: "T1",
+                farm: "T2",
+                cost: "中",
+                ranged: false,
+                support: false,
+                description: "拳霸是強力的近戰職業，在打BOSS方面表現出色，刷怪效率也不錯。操作較為複雜，但威力強大。裝備造價適中。"
+            },
+            "船長": {
+                boss: "T1",
+                farm: "T1",
+                cost: "中",
+                ranged: true,
+                support: false,
+                description: "船長是全能型的遠程職業，在打BOSS和刷怪方面都表現出色。擁有多樣化的技能組合，適應性強。裝備造價適中。"
+            },
+            "刀賊": {
+                boss: "T1",
+                farm: "T2",
+                cost: "中",
+                ranged: false,
+                support: false,
+                description: "刀賊是出色的近戰職業，在打BOSS方面表現出色，煙霧彈技能可以提高打BOSS生存機率，刷怪效率也不錯。暴擊率高，爆發傷害強。裝備造價適中。"
+            },
+            "鏢賊": {
+                boss: "T1",
+                farm: "T1",
+                cost: "中",
+                ranged: true,
+                support: false,
+                description: "鏢賊是強力的遠程職業，在打BOSS和刷怪方面都表現出色。攻擊速度快，機動性強。裝備造價適中。"
+            }
+        };
+
+        // 初始化變數
+        let currentQuestion = 1;
+        const totalQuestions = 5;
+        let answers = {};
+        let selectedOption = null;
+
+        // 獲取元素
+        const introDiv = document.getElementById('intro');
+        const quizDiv = document.getElementById('quiz');
+        const startBtn = document.getElementById('start-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const resultDiv = document.getElementById('result');
+        const progressBar = document.getElementById('progress-bar');
+        const restartBtn = document.getElementById('restart');
+
+        // 開始測驗
+        startBtn.addEventListener('click', () => {
+            introDiv.style.display = 'none';
+            quizDiv.style.display = 'block';
+            updateProgressBar();
+        });
+
+        // 選擇選項
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll(`#q${currentQuestion} .option`).forEach(opt => {
+                    opt.style.backgroundColor = 'var(--secondary)';
+                });
+                option.style.backgroundColor = 'var(--accent)';
+                selectedOption = option.getAttribute('data-value');
+                nextBtn.disabled = false;
+            });
+        });
+
+        // 上一題
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestion > 1) {
+                document.getElementById(`q${currentQuestion}`).classList.remove('active');
+                currentQuestion--;
+                document.getElementById(`q${currentQuestion}`).classList.add('active');
+                
+                if (currentQuestion === 1) {
+                    prevBtn.disabled = true;
+                }
+                
+                nextBtn.textContent = '下一題';
+                updateProgressBar();
+                
+                // 恢復之前的選擇
+                if (answers[`q${currentQuestion}`]) {
+                    selectedOption = answers[`q${currentQuestion}`];
+                    document.querySelectorAll(`#q${currentQuestion} .option`).forEach(opt => {
+                        if (opt.getAttribute('data-value') === selectedOption) {
+                            opt.style.backgroundColor = 'var(--accent)';
+                        } else {
+                            opt.style.backgroundColor = 'var(--secondary)';
+                        }
+                    });
+                    nextBtn.disabled = false;
+                } else {
+                    selectedOption = null;
+                    nextBtn.disabled = true;
+                }
+            }
+        });
+
+        // 下一題
+        nextBtn.addEventListener('click', () => {
+            // 保存答案
+            answers[`q${currentQuestion}`] = selectedOption;
+            
+            if (currentQuestion < totalQuestions) {
+                document.getElementById(`q${currentQuestion}`).classList.remove('active');
+                currentQuestion++;
+                document.getElementById(`q${currentQuestion}`).classList.add('active');
+                
+                prevBtn.disabled = false;
+                
+                if (currentQuestion === totalQuestions) {
+                    nextBtn.textContent = '查看結果';
+                }
+                
+                // 恢復之前的選擇
+                if (answers[`q${currentQuestion}`]) {
+                    selectedOption = answers[`q${currentQuestion}`];
+                    document.querySelectorAll(`#q${currentQuestion} .option`).forEach(opt => {
+                        if (opt.getAttribute('data-value') === selectedOption) {
+                            opt.style.backgroundColor = 'var(--accent)';
+                        } else {
+                            opt.style.backgroundColor = 'var(--secondary)';
+                        }
+                    });
+                    nextBtn.disabled = false;
+                } else {
+                    selectedOption = null;
+                    nextBtn.disabled = true;
+                }
+            } else {
+                // 顯示結果
+                showResult();
+            }
+            
+            updateProgressBar();
+        });
+
+        // 重新測驗
+        restartBtn.addEventListener('click', () => {
+            resultDiv.style.display = 'none';
+            introDiv.style.display = 'block';
+            
+            // 重置
+            currentQuestion = 1;
+            answers = {};
+            selectedOption = null;
+            
+            document.querySelectorAll('.question').forEach(q => {
+                q.classList.remove('active');
+            });
+            document.getElementById('q1').classList.add('active');
+            
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.backgroundColor = 'var(--secondary)';
+            });
+            
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+            nextBtn.textContent = '下一題';
+        });
+
+        // 更新進度條
+        function updateProgressBar() {
+            const progress = (currentQuestion / totalQuestions) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // 顯示結果
+        function showResult() {
+            // 根據答案推薦職業
+            let recommendedJob = getRecommendedJob();
+            
+            // 顯示結果
+            document.getElementById('job-result').textContent = recommendedJob;
+            document.getElementById('job-description').textContent = jobs[recommendedJob].description;
+            document.getElementById('boss-tier').textContent = jobs[recommendedJob].boss;
+            document.getElementById('farm-tier').textContent = jobs[recommendedJob].farm;
+            document.getElementById('cost').textContent = jobs[recommendedJob].cost;
+            
+            quizDiv.style.display = 'none';
+            resultDiv.style.display = 'block';
+            restartBtn.style.display = 'block';
+        }
+
+        // 根據答案推薦職業
+        function getRecommendedJob() {
+            const preference = answers.q1;
+            const range = answers.q2;
+            const budget = answers.q3;
+            const complexity = answers.q4;
+            const playstyle = answers.q5;
+            
+            let points = {};
+            
+            // 初始化所有職業的分數
+            for (let job in jobs) {
+                points[job] = 0;
+            }
+            
+            // 根據偏好給職業加分
+            for (let job in jobs) {
+                // 根據打王/刷怪偏好
+                if (preference === "boss" && jobs[job].boss.includes("T0") || jobs[job].boss.includes("T1")) {
+                    points[job] += 3;
+                } else if (preference === "farm" && jobs[job].farm.includes("T0") || jobs[job].farm.includes("T1")) {
+                    points[job] += 3;
+                } else if (preference === "support" && jobs[job].support) {
+                    points[job] += 3;
+                }
+                
+                // 根據攻擊距離
+                if (range === "ranged" && jobs[job].ranged) {
+                    points[job] += 2;
+                } else if (range === "melee" && !jobs[job].ranged) {
+                    points[job] += 2;
+                }
+                
+                // 根據預算
+                if (budget === "expensive" && jobs[job].cost === "高") {
+                    points[job] += 1;
+                } else if (budget === "budget" && jobs[job].cost !== "高") {
+                    points[job] += 1;
+                }
+                
+                // 根據操作複雜度
+                if (complexity === "complex" && (job === "火毒" || job === "拳霸")) {
+                    points[job] += 1;
+                } else if (complexity === "simple" && job !== "火毒" && job !== "拳霸") {
+                    points[job] += 1;
+                }
+                
+                // 根據遊戲風格
+                if (playstyle === "solo" && !jobs[job].support) {
+                    points[job] += 1;
+                } else if (playstyle === "team" && jobs[job].support) {
+                    points[job] += 1;
+                }
+            }
+            
+            // 找出得分最高的職業
+            let maxPoints = 0;
+            let recommendedJob = "";
+            
+            for (let job in points) {
+                if (points[job] > maxPoints) {
+                    maxPoints = points[job];
+                    recommendedJob = job;
+                }
+            }
+            
+            return recommendedJob;
+        }
+    </script>
+</body>
+</html> 
