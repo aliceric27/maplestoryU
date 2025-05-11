@@ -319,13 +319,13 @@
                 support: false,
                 description: "拳霸是強力的近戰職業，在打BOSS方面表現出色，刷怪效率也不錯。操作較為複雜，但威力強大。裝備造價較低。"
             },
-            "船長": {
+            "槍神": {
                 boss: "T1",
                 farm: "T1",
                 cost: "低",
                 ranged: true,
                 support: false,
-                description: "船長是全能型的遠程職業，在打BOSS和刷怪方面都表現出色。擁有多樣化的技能組合，操作稍微複雜，適應性強。裝備造價較低。"
+                description: "槍神是全能型的遠程職業，在打BOSS和刷怪方面都表現出色。擁有多樣化的技能組合，操作稍微複雜，適應性強。裝備造價較低。"
             },
             "刀賊": {
                 boss: "T1",
@@ -582,9 +582,9 @@
                 }
                 
                 // 根據操作複雜度
-                if (complexity === "complex" && (job === "火毒" || job === "拳霸" || job === "船長")) {
+                if (complexity === "complex" && (job === "火毒" || job === "拳霸" || job === "槍神")) {
                     points[job] += 1;
-                } else if (complexity === "simple" && job !== "火毒" && job !== "拳霸" && job !== "船長") {
+                } else if (complexity === "simple" && job !== "火毒" && job !== "拳霸" && job !== "槍神") {
                     points[job] += 1;
                 }
                 
@@ -596,10 +596,10 @@
                 }
                 
                 // 給每個職業添加一個小的獨特加權，避免完全相同的得分
-                // 船長和鏢賊差異化
-                if (job === "船長") {
+                // 槍神和鏢賊差異化
+                if (job === "槍神") {
                     if (preference === "boss" && preference === "farm") {
-                        points[job] += 0.2; // 船長在打王和刷怪都很平衡
+                        points[job] += 0.2; // 槍神在打王和刷怪都很平衡
                     }
                 }
                 if (job === "鏢賊") {
