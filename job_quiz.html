@@ -305,11 +305,11 @@
             },
             "神射手": {
                 boss: "T2",
-                farm: "T1",
+                farm: "T2",
                 cost: "中等",
                 ranged: true,
                 support: false,
-                description: "神射手擁有優秀的刷怪能力和不錯的BOSS戰鬥能力。遠程攻擊安全性高，適合喜歡高機動性的玩家。裝備造價適中。"
+                description: "神射手擁有良好的刷怪能力和不錯的BOSS戰鬥能力。遠程攻擊安全性高，適合喜歡高機動性的玩家。裝備造價適中。"
             },
             "拳霸": {
                 boss: "T1",
@@ -615,7 +615,7 @@
                 }
                 if (job === "神射手") {
                     if (preference === "farm") {
-                        points[job] += 0.2; // 神射手刷怪略優
+                        points[job] += 0.1; // 神射手刷怪評分降低
                     }
                 }
                 // 火毒和冰雷差異化
